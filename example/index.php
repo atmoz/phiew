@@ -8,3 +8,4 @@ $view = new \Phiew\View($viewFolder);
 // Alternative method for setting data: $view->list = array(...);
 $list = array('Some', 'example', 'data', 'for', 'you');
 $view->render('index', array('list' => $list));
+$view->render('useFoldersToo/dateSelect');

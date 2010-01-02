@@ -1,7 +1,5 @@
 <?php
 /**
- * @package Phiew
- * @version 0.9.0
  * @author Adrian Dvergsdal
  * @link http://github.com/atmoz/phiew
  * @license http://creativecommons.org/licenses/by-sa/3.0/us/
@@ -15,7 +13,7 @@ class View
 {
     protected $_dirname;
     protected $_data;
-    protected static $_viewHelpers;
+    protected static $_helpers;
     
     /**
      * Constructor
@@ -25,16 +23,6 @@ class View
     public function __construct($dirname = null)
     {
         $this->setDirname($dirname);
-    }
-    
-    /**
-     * Set folder for view scripts
-     * 
-     * @param $dirname string
-     */
-    public function setDirname($dirname)
-    {
-        $this->_dirname = rtrim($this->_getSafePath($dirname), '/');
     }
     
     /**
@@ -58,6 +46,16 @@ class View
             trigger_error('Bad characters used in path: ' . $string, E_USER_ERROR);
             return null;
         }
+    }
+    
+    /**
+     * Set folder for view scripts
+     * 
+     * @param $dirname string
+     */
+    public function setDirname($dirname)
+    {
+        $this->_dirname = rtrim($this->_getSafePath($dirname), '/');
     }
     
     /**
@@ -98,7 +96,7 @@ class View
     }
     
     /**
-     * Empty data
+     * Clear data
      */
     public function clearData()
     {
@@ -110,6 +108,7 @@ class View
      * 
      * @param $view string
      * @param $data array
+     * @return boolean
      */
     public function render($view, $data = array())
     {
@@ -122,8 +121,7 @@ class View
                 $this->__set($key, $value);
             }
 
-            include($filename);
-            return true;
+            return (bool) include $filename;
         }
         else
         {
@@ -154,5 +152,41 @@ class View
     public function escape($string)
     {
         return htmlspecialchars($string);
+    }
+    
+    /**
+     * Check if one of the view helpers have that missing function
+     */
+    public function __call($function, $args)
+    {
+        // No bullshitting, m'kay?
+        if (!ctype_alnum($function))
+        {
+            trigger_error('That\'s not a pretty name for a function, is it?', E_USER_ERROR);
+        }
+        
+        $classname = ucfirst($function);
+        
+        // Make sure we have that view helper loaded
+        if (!isset(self::$_helpers[$classname]))
+        {
+            try
+            {
+                include_once dirname(__FILE__) . '/Helper/' . $classname . '.php';
+                $class = eval("return new \Phiew\Helper\\$classname();");
+                self::$_helpers[$classname] = $class;
+            }
+            catch (Exception $e)
+            {
+                trigger_error("Could not load view helper \"$classname\"", E_USER_ERROR);
+            }
+        }
+        
+        // Call view helper
+        $helper = self::$_helpers[$classname];
+        if (is_callable(array($helper, $function)))
+        {
+            return call_user_func_array(array($helper, $function), $args);
+        }
     }
 }
