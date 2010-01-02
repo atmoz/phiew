@@ -165,28 +165,24 @@ class View
             trigger_error('That\'s not a pretty name for a function, is it?', E_USER_ERROR);
         }
         
-        $classname = ucfirst($function);
-        
         // Make sure we have that view helper loaded
-        if (!isset(self::$_helpers[$classname]))
+        if (!isset(self::$_helpers[$function]))
         {
-            try
-            {
-                include_once dirname(__FILE__) . '/Helper/' . $classname . '.php';
-                $class = eval("return new \Phiew\Helper\\$classname();");
-                self::$_helpers[$classname] = $class;
-            }
-            catch (Exception $e)
-            {
-                trigger_error("Could not load view helper \"$classname\"", E_USER_ERROR);
-            }
+            $classname = ucfirst($function);
+            require_once dirname(__FILE__) . '/Helper/' . $classname . '.php';
+            $class = eval("return new \\Phiew\\Helper\\$classname();");
+            self::$_helpers[$function] = $class;
         }
         
         // Call view helper
-        $helper = self::$_helpers[$classname];
+        $helper = self::$_helpers[$function];
         if (is_callable(array($helper, $function)))
         {
             return call_user_func_array(array($helper, $function), $args);
+        }
+        else
+        {
+            trigger_error("Could not load view helper \"$classname\"", E_USER_ERROR);
         }
     }
 }
