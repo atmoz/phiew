@@ -125,7 +125,7 @@ class View
         }
         else
         {
-            trigger_error('Kunne ikke finne view: ' . $filename, E_USER_ERROR);
+            trigger_error('Could not find view script: ' . $filename, E_USER_ERROR);
             return false;
         }
     }
