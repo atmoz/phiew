@@ -4,12 +4,11 @@
  * @link http://github.com/atmoz/phiew
  * @license http://creativecommons.org/licenses/by-sa/3.0/us/
  */
-namespace Phiew;
 
 /**
  * The main class for rendering of view scripts
  */
-class View
+class Phiew_View
 {
     protected $_dirname;
     protected $_data;
@@ -169,9 +168,8 @@ class View
         if (!isset(self::$_helpers[$function]))
         {
             $classname = ucfirst($function);
-            require_once dirname(__FILE__) . '/Helper/' . $classname . '.php';
-            $class = eval("return new \\Phiew\\Helper\\$classname();");
-            self::$_helpers[$function] = $class;
+            require_once dirname(__FILE__) . "//View//Helper//$classname.php";
+            self::$_helpers[$function] = eval("return new Phiew_View_Helper_$classname();");
         }
         
         // Call view helper
@@ -182,7 +180,7 @@ class View
         }
         else
         {
-            trigger_error("Could not load view helper \"$classname\"", E_USER_ERROR);
+            trigger_error("Could not load view helper \"$function\"", E_USER_ERROR);
         }
     }
 }

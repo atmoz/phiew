@@ -4,18 +4,11 @@
  * @link http://github.com/atmoz/phiew
  * @license http://creativecommons.org/licenses/by-sa/3.0/us/
  */
-namespace Phiew\Helper;
 
-class InsertDateSelect
+class Phiew_View_Helper_InsertDateSelect
 {
-    public function __construct()
-    {
-        // This just needs to exist.
-        // Stops PHP from calling function with same name as class when creating object
-    }
-    
     /**
-     * Too simple date select (will make it better later)
+     * Too simple date select (will make it better later, using this as example for now)
      * 
      * @param string $name
      * @param array $value
@@ -24,10 +17,10 @@ class InsertDateSelect
     public function insertDateSelect($name = null, $value = array(), 
         $format = '%s %s.%s.%s', $checkbox = false
     ) {
-        $name = htmlentities($name);
-        $days = range(1, 31);
+        $name   = htmlentities($name);
+        $days   = range(1, 31);
         $months = range(1, 12);
-        $years = range(date('Y'), date('Y')+10);
+        $years  = range(date('Y')-100, date('Y'));
         
         $dayHtml = '<select name="'.$name.'[day]" class="day">';
         foreach ($days as $day)
