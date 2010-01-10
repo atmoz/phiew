@@ -1,7 +1,7 @@
-<h1>Simple Phiew example</h1>
+<h1>Phiew example</h1>
+<h2>Inserting data to a view</h2>
 
-<p>Less is more. Let PHP do the templating too.</p>
-
+<p><?php echo $this->escape($this->title) ?></p>
 <ul>
     <?php foreach ($this->list as $listItem): ?>
         <li><?php echo $this->escape($listItem) ?></li>
