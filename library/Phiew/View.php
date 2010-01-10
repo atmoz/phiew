@@ -92,6 +92,10 @@ class Phiew_View
         {
             return $this->_data[$name];
         }
+        else
+        {
+        	trigger_error('Missing view data: ' . $name, E_USER_WARNING);
+        }
     }
     
     /**
@@ -164,16 +168,18 @@ class Phiew_View
             trigger_error('That\'s not a pretty name for a function, is it?', E_USER_ERROR);
         }
         
+       	$helperKey = strtolower($function);
+        
         // Make sure we have that view helper loaded
-        if (!isset(self::$_helpers[$function]))
+        if (!isset(self::$_helpers[$helperKey]))
         {
-            $classname = ucfirst($function);
-            require_once dirname(__FILE__) . "//View//Helper//$classname.php";
-            self::$_helpers[$function] = eval("return new Phiew_View_Helper_$classname();");
+            $helperClass = 'Phiew_View_Helper_' . ucfirst($function);
+            require_once dirname(__FILE__) . '/View/Helper/' . ucfirst($function) . '.php';
+            self::$_helpers[$helperKey] = eval("return new $helperClass();");
         }
         
         // Call view helper
-        $helper = self::$_helpers[$function];
+        $helper = self::$_helpers[$helperKey];
         if (is_callable(array($helper, $function)))
         {
             return call_user_func_array(array($helper, $function), $args);
