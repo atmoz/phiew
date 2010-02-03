@@ -14,103 +14,101 @@ abstract class Phiew_Controller_StateAbstract
 	 * The random state key
 	 */
 	protected $_stateKey;
-	
+
 	/**
-	 * Generate default state.
-	 * 
+	 * Generate default state. Overload this.
+	 *
 	 * @return mixed
 	 */
-	abstract protected function _createDefaultState();
-	
+	protected function _createDefaultState()
+	{
+		return array(); // Return your own state
+	}
+
 	/**
 	 * Get the saved state, or default state if empty
-	 * 
+	 *
 	 * @return mixed
 	 */
 	protected function _getState()
 	{
 		$stateKey = $this->_getStateKey();
-		
+
 		if (isset($_SESSION[get_class($this)][$stateKey]))
 		{
-			return $_SESSION[get_class($this)][$stateKey];
+			return unserialize($_SESSION[get_class($this)][$stateKey]);
 		}
 		else
 		{
 			return $this->_createDefaultState();
 		}
 	}
-	
+
 	/**
 	 * Save state
-	 * 
+	 *
 	 * @param mixed $state
 	 */
 	protected function _setState($state)
 	{
-		$stateKey = $this->_getStateKey();
-		$_SESSION[get_class($this)][$stateKey] = $state;
+		$_SESSION[get_class($this)][$this->_getStateKey()] = serialize($state);
 	}
-	
+
 	/**
 	 * Get the state key, existing or new
-	 * 
+	 *
 	 * @return string
 	 */
 	protected function _getStateKey()
 	{
 		if (empty($this->_stateKey))
 		{
-			if (isset($_REQUEST['stateKey']))
+			if (isset($_REQUEST['statekey']))
 			{
-				$this->_stateKey = $_REQUEST['stateKey'];
+				$this->_stateKey = $_REQUEST['statekey'];
 			}
 			else
 			{
-				$this->_stateKey = $this->_createNewStateKey();
+				$this->_stateKey = sha1(mt_rand());
 			}
 		}
-		
+
 		return $this->_stateKey;
 	}
-	
-	/**
-	 * Generate new random state key
-	 * 
-	 * @return string
-	 */
-	protected function _createNewStateKey()
-	{
-		return sha1(md5(mt_rand() . $_SERVER['SERVER_ADDR']) . $_SERVER['REMOTE_ADDR']);
-	}
-	
+
 	/**
 	 * Redirect to another page, with the state key as parameter
-	 * 
+	 *
 	 * @param string $url
 	 * @param mixed $state
 	 */
 	protected function _redirectState($url, $state = null)
 	{
-		$stateKey = null;
 		if (!is_null($state))
 		{
 			$this->_setState($state);
-			$stateKey = $this->_getStateKey();
-			$url = $url . (stripos($url, '?') ? '&' : '?') . 'stateKey=' . $stateKey;
+
+			if (preg_match('/[&\?]statekey=/', $url))
+			{
+				$url = preg_replace('/([&\?]statekey=)[^&#]*/', '${1}'.$this->_getStateKey(), $url);
+			}
+			else
+			{
+				$url .= (strpos($url, '?') ? '&' : '?') . 'statekey=' . $this->_getStateKey();
+			}
 		}
-		
+
 		if (headers_sent())
 		{
-			echo '<script type="text/javascript">document.location = '
-				 . htmlspecialchars($url) . '</script>';
-			echo '<a href="' . htmlspecialchars($url) . '">Redirecting ...</a>';
+			echo '<script type="text/javascript">document.location = ' 
+				. htmlspecialchars($url) . '</script>'
+				. '<a href="' . htmlspecialchars($url) . '">Redirecting ...</a>';
 		}
 		else
 		{
 			header('location: ' . $url);
 		}
-		
+
 		exit();
 	}
 }
