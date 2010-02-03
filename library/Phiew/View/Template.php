@@ -8,7 +8,7 @@
 /**
  * The main class for rendering of view scripts
  */
-class Phiew_View
+class Phiew_View_Template
 {
 	protected $_dirname;
 	protected $_data;
@@ -21,11 +21,13 @@ class Phiew_View
 	 */
 	public function __construct($dirname = null)
 	{
-		if (is_null($dirname))
+		$this->_data = array();
+		
+		if (is_null($dirname) && defined('PHIEW_VIEW_DIR'))
 		{
 			$this->setDirname(PHIEW_VIEW_DIR);
 		}
-		else if (defined(PHIEW_VIEW_DIR))
+		else
 		{
 			$this->setDirname($dirname);
 		}
@@ -181,7 +183,7 @@ class Phiew_View
 		if (!isset(self::$_helpers[$helperKey]))
 		{
 			$helperClass = 'Phiew_View_Helper_' . ucfirst($function);
-			require_once dirname(__FILE__) . '/View/Helper/' . ucfirst($function) . '.php';
+			require_once dirname(__FILE__) . '/Helper/' . ucfirst($function) . '.php';
 			self::$_helpers[$helperKey] = eval("return new $helperClass();");
 		}
 

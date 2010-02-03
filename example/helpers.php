@@ -1,6 +1,8 @@
 <?php
 
+require_once '../library/Phiew/View/Template.php';
 require_once '../library/Phiew/View.php';
 
-$view = new Phiew_View(dirname(__FILE__) . '/views');
-$view->render('helpers');
+define('PHIEW_VIEW_DIR', dirname(__FILE__) . '/views');
+
+Phiew_View::render('helpers');

@@ -1,10 +1,16 @@
 <?php
 
-// We need that class first
+require_once '../library/Phiew/View/Template.php';
 require_once '../library/Phiew/View.php';
 
-// Then we create a view pointed at our views folder, so it knows where to look ...
-$view = new Phiew_View(dirname(__FILE__) . '/views');
+// Remember to set this so we know where our templates is
+define('PHIEW_VIEW_DIR', dirname(__FILE__) . '/views');
 
-// ... when we try to render "hello-world"
-$view->render('hello-world');
+// Two ways to use templates ...
+
+// #1: Use Phiew_View's static functions
+Phiew_View::render('hello-world');
+
+// #2: Create Phiew_View_Template object
+// $template = new Phiew_View_Template();
+// $template->render('hello-world');
