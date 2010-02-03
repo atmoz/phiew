@@ -52,7 +52,6 @@ class Phiew_View_Template
 		else
 		{
 			trigger_error('Bad characters used in path: ' . $string, E_USER_ERROR);
-			return null;
 		}
 	}
 

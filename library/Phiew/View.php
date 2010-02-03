@@ -15,10 +15,10 @@ class Phiew_View
 		$template = new Phiew_View_Template();
 		$template->render($view, $data);
 	}
-	
+
 	public static function capture($view, $data = array())
 	{
-        $template = new Phiew_View_Template();
+		$template = new Phiew_View_Template();
 		return $template->capture($view, $data);
 	}
 }

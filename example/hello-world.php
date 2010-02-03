@@ -3,7 +3,7 @@
 require_once '../library/Phiew/View/Template.php';
 require_once '../library/Phiew/View.php';
 
-// Remember to set this so we know where our templates is
+// Remember to set this so we know where our templates is located
 define('PHIEW_VIEW_DIR', dirname(__FILE__) . '/views');
 
 // Two ways to use templates ...
