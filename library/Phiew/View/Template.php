@@ -43,10 +43,12 @@ class Phiew_View_Template
 	{
 		$allowedChars = array('/', '.', '-', '_');
 
-		if (!empty($string)
-			&& ctype_alnum(str_replace($allowedChars, '', $string))
-			&& strpos($string, '..') === false
-		) {
+		if (is_null($string))
+		{
+			return null; // Skip the validation (ctype_alnum() makes it fail anyway)
+		}
+		else if (ctype_alnum(str_replace($allowedChars, '', $string)) && strpos($string, '..') === false) 
+		{
 			return $string;
 		}
 		else
@@ -73,8 +75,16 @@ class Phiew_View_Template
 	 */
 	protected function _getFilename($view)
 	{
-		return $this->_getSafePath($this->_dirname)
-			. '/' . $this->_getSafePath($view) . '.phtml';
+		if (substr($view, -6) == '.phtml')
+		{
+			// Assume full path is given when using .phtml
+			return $this->_getSafePath($view);
+		}
+		else
+		{
+			return $this->_getSafePath($this->_dirname)
+				. '/' . $this->_getSafePath($view) . '.phtml';
+		}
 	}
 
 	/**
