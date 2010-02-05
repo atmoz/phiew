@@ -192,8 +192,13 @@ class Phiew_View_Template
 		if (!isset(self::$_helpers[$helperKey]))
 		{
 			$helperClass = 'Phiew_View_Helper_' . ucfirst($function);
-			require_once dirname(__FILE__) . '/Helper/' . ucfirst($function) . '.php';
-			self::$_helpers[$helperKey] = eval("return new $helperClass();");
+			$helperFile = dirname(__FILE__) . '/Helper/' . ucfirst($function) . '.php';
+			
+            if (is_readable($helperFile))
+            {
+                require_once $helperFile;
+                self::$_helpers[$helperKey] = eval("return new $helperClass();");
+            }
 		}
 
 		// Call view helper
