@@ -17,11 +17,11 @@ class Phiew_View_Template
 	/**
 	 * Constructor
 	 *
-	 * @param $dirname string Location for view script folder
+	 * @param string $dirname Location for view script folder
 	 */
 	public function __construct($dirname = null)
 	{
-		$this->_data = array();
+		$this->clearData();
 		
 		if (is_null($dirname) && defined('PHIEW_VIEW_DIR'))
 		{
@@ -36,7 +36,7 @@ class Phiew_View_Template
 	/**
 	 * Check input for bad characters
 	 *
-	 * @param $string string
+	 * @param string $string
 	 * @return string
 	 */
 	protected function _getSafePath($string)
@@ -60,38 +60,49 @@ class Phiew_View_Template
 	/**
 	 * Set folder for view scripts
 	 *
-	 * @param $dirname string
+	 * @param string $dirname
 	 */
 	public function setDirname($dirname)
 	{
 		$this->_dirname = rtrim($this->_getSafePath($dirname), '/');
 	}
+	
+	/**
+	 * Get view folder
+	 * 
+	 * @return string
+	 */
+	public function getDirname()
+	{
+		return $this->_dirname;
+	}
 
 	/**
 	 * Generate full file path for view script
 	 *
-	 * @param $view string
+	 * @param string $view
 	 * @return string
 	 */
 	protected function _getFilename($view)
 	{
+		$view = $this->_getSafePath($view);
+		
 		if (substr($view, -6) == '.phtml')
 		{
 			// Assume full path is given when using .phtml
-			return $this->_getSafePath($view);
+			return $view;
 		}
 		else
 		{
-			return $this->_getSafePath($this->_dirname)
-				. '/' . $this->_getSafePath($view) . '.phtml';
+			return $this->getDirname() . '/' . $view . '.phtml';
 		}
 	}
 
 	/**
 	 * Set data
 	 *
-	 * @param $name string
-	 * @param $value mixed
+	 * @param string $name
+	 * @param mixed $value
 	 */
 	public function __set($name, $value)
 	{
@@ -101,12 +112,12 @@ class Phiew_View_Template
 	/**
 	 * Get data
 	 *
-	 * @param $name string
+	 * @param string $name
 	 * @return mixed
 	 */
 	public function __get($name)
 	{
-		if (array_key_exists($name, (array)$this->_data))
+		if (array_key_exists($name, $this->_data))
 		{
 			return $this->_data[$name];
 		}
@@ -117,45 +128,60 @@ class Phiew_View_Template
 	}
 
 	/**
-	 * Clear data
+	 * Clear all data
 	 */
 	public function clearData()
 	{
 		$this->_data = array();
 	}
+	
+	/**
+	 * Replace data with array
+	 * 
+	 * @param array $data
+	 */
+	public function setData(array $data)
+	{
+		$this->clearData();
+		
+		foreach ($data as $key => $value)
+		{
+			$this->__set($key, $value);
+		}
+	}
+	
+	public function getData()
+	{
+		return $this->_data;
+	}
 
 	/**
 	 * Output view script
 	 *
-	 * @param $view string
-	 * @param $data array
+	 * @param string $view
+	 * @param array $data
 	 * @return boolean
 	 */
-	public function render($view, $data = array())
+	public function render($view, array $data = array())
 	{
 		$filename = $this->_getFilename($view);
 
 		if (is_readable($filename))
 		{
-			foreach ($data as $key => $value)
-			{
-				$this->__set($key, $value);
-			}
-
+			$this->setData($data);
 			return (bool) include $filename;
 		}
 		else
 		{
 			trigger_error('Could not find view script: ' . $filename, E_USER_ERROR);
-			return false;
 		}
 	}
 
 	/**
 	 * Get output from view script as string
 	 *
-	 * @param $view string
-	 * @param $data array
+	 * @param string $view
+	 * @param array $data
 	 * @return string
 	 */
 	public function capture($view, $data = array())
@@ -176,7 +202,7 @@ class Phiew_View_Template
 	}
 
 	/**
-	 * Check if one of the view helpers have that missing function
+	 * Try to load and call a view helper
 	 */
 	public function __call($function, $args)
 	{
@@ -194,11 +220,11 @@ class Phiew_View_Template
 			$helperClass = 'Phiew_View_Helper_' . ucfirst($function);
 			$helperFile = dirname(__FILE__) . '/Helper/' . ucfirst($function) . '.php';
 			
-            if (is_readable($helperFile))
-            {
-                require_once $helperFile;
-                self::$_helpers[$helperKey] = eval("return new $helperClass();");
-            }
+			if (is_readable($helperFile))
+			{
+				require_once $helperFile;
+				self::$_helpers[$helperKey] = eval("return new $helperClass();");
+			}
 		}
 
 		// Call view helper
