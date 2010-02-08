@@ -10,9 +10,9 @@
  */
 class Phiew_View_Template
 {
-	protected $_dirname;
-	protected $_data;
-	protected static $_helpers;
+	protected $_dirname = null;
+	protected $_data = array();
+	protected static $_helpers = array();
 
 	/**
 	 * Constructor
@@ -21,8 +21,6 @@ class Phiew_View_Template
 	 */
 	public function __construct($dirname = null)
 	{
-		$this->clearData();
-		
 		if (is_null($dirname) && defined('PHIEW_VIEW_DIR'))
 		{
 			$this->setDirname(PHIEW_VIEW_DIR);
@@ -128,7 +126,7 @@ class Phiew_View_Template
 	}
 
 	/**
-	 * Clear all data
+	 * Clear data array
 	 */
 	public function clearData()
 	{
@@ -136,7 +134,7 @@ class Phiew_View_Template
 	}
 	
 	/**
-	 * Replace data with array
+	 * Replace data array
 	 * 
 	 * @param array $data
 	 */
@@ -150,6 +148,11 @@ class Phiew_View_Template
 		}
 	}
 	
+	/**
+	 * Get data array
+	 * 
+	 * @return array
+	 */
 	public function getData()
 	{
 		return $this->_data;
