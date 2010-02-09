@@ -10,10 +10,10 @@ class LoginController extends Phiew_Controller_StateAbstract
 {
 	protected function _createDefaultState()
 	{
+		// Define default values in state
 		return array(
-			'statekey'	=> $this->_getStateKey(),
 			'username'	=> null,
-			'message'	=> null
+			'message'	=> 'Try to log in with a wrong username.'
 		);
 	}
 	
@@ -25,22 +25,23 @@ class LoginController extends Phiew_Controller_StateAbstract
 	
 	public function submitForm()
 	{
-		$url = $_SERVER['REQUEST_URI'];
 		$state = $this->_createDefaultState();
-		$state['username'] = $_POST['username'];
+		$state['username'] = $_POST['username']; // Modify state
 		
 		if ($_POST['username'] == 'test' && $_POST['password'] == 'test')
 		{
-			$state['message'] = 'Login OK. Todo: redirect user somewhere ...';
-			$this->_redirectState($url, $state);
+			$state['message'] = 'Login OK. :-)';
 		}
 		else
 		{
 			$state['message'] = 'Wrong username or password. Try again.';
-			$this->_redirectState($url, $state);
 		}
+		
+		// Saves the state and redirects to URL with statekey as parameter
+		$this->_redirectState($_SERVER['REQUEST_URI'], $state);
 	}
 }
+
 
 // Bootstrap the controller
 $controller = new LoginController();
