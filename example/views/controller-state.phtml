@@ -1,0 +1,18 @@
+
+<h1>Phiew example</h1>
+<h2>Controller state</h2>
+
+<p>
+	Try to log in with a wrong username. 
+	Notice how the controller remembers the username between requests by adding 
+	a random "statekey" in the URL. Removing the statekey from the URL reset the state.
+</p>
+
+<form action="" method="post">
+	<input type="hidden" name="action" value="submitForm" />
+	<label>Username: <input type="text" name="username" value="<?php echo $this->escape($this->username) ?>" /></label>
+	<label>Password: <input type="password" name="password" id="password" value="" /></label>
+	<input type="submit" value="Log in" />
+</form>
+
+<p><strong><?php echo $this->escape($this->message) ?></strong></p>
