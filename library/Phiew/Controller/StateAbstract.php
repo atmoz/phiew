@@ -69,7 +69,7 @@ abstract class Phiew_Controller_StateAbstract
 			}
 			else
 			{
-				$this->_stateKey = sha1(mt_rand());
+				$this->_stateKey = substr(sha1(mt_rand()), 0, 16);
 			}
 		}
 
