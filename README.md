@@ -6,7 +6,7 @@ Simple and fast MVC components for PHP 5
 
 Phiew is just a couple of simple components I use in small projects where I have 
 short deadlines. That means I don't want to use much time setting up advanced 
-frameworks, but at the same time I don't want to make unoranized PHP files where
+frameworks, but at the same time I don't want to make unorganized PHP files where
 business/domain logic and presentation is mixed together like spaghetti.
 
 At first I got inspired by Zend Framework's Zend_View class, so I made my own
@@ -22,13 +22,10 @@ and not bloated with unnecessary additions, modifications, or complications.
 
 As of now, this is what's on the menu:
 
-*	**View:** Simple templating with alternative PHP syntax and plugins (view helpers).
-	Example: <http://github.com/atmoz/phiew/blob/master/example/hello-world.php>
-
-*	**Controller:** Easy handling of states between requests.
-	Example: <http://github.com/atmoz/phiew/blob/master/example/controller-state.php>
-
-*	**Model:** Coming soon! Thinking about making some simple form functions (validation etc.)
+*	Simple templating with alternative PHP syntax and plugins (view helpers).
+	[See example](http://github.com/atmoz/phiew/blob/master/example/hello-world.php)
+*	Easy handling of states between requests.
+	[See example](http://github.com/atmoz/phiew/blob/master/example/controller-state.php)
 
 ## Installation and use
 
@@ -54,3 +51,7 @@ Extend your controller with this class, define your default state by overloading
 included as an argument (you can use hidden fields and `_redirectState()`).
 [See example implementation](http://github.com/atmoz/phiew/blob/master/example/controller-state.php).
 
+## Examples
+
+I try to show how I use the classes with simple examples.
+You can find them in the [*example* folder](http://github.com/atmoz/phiew/tree/master/example/).
