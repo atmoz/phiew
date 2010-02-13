@@ -6,29 +6,22 @@
  */
 
 /**
- * The main class for rendering of view scripts
+ * The main class for rendering of view templates
  */
 class Phiew_View_Template
 {
-	protected $_dirname = null;
+	protected $_templateFolder = null;
 	protected $_data = array();
 	protected static $_helpers = array();
 
 	/**
 	 * Constructor
 	 *
-	 * @param string $dirname Location for view script folder
+	 * @param string $templateFolder Location for template folder
 	 */
-	public function __construct($dirname = null)
+	public function __construct($templateFolder = null)
 	{
-		if (is_null($dirname) && defined('PHIEW_VIEW_DIR'))
-		{
-			$this->setDirname(PHIEW_VIEW_DIR);
-		}
-		else
-		{
-			$this->setDirname($dirname);
-		}
+		$this->setTemplateFolder($templateFolder);
 	}
 
 	/**
@@ -56,13 +49,18 @@ class Phiew_View_Template
 	}
 
 	/**
-	 * Set folder for view scripts
+	 * Set folder for view templates
 	 *
-	 * @param string $dirname
+	 * @param string $templateFolder
 	 */
-	public function setDirname($dirname)
+	public function setTemplateFolder($templateFolder)
 	{
-		$this->_dirname = rtrim($this->_getSafePath($dirname), '/');
+		if (empty($templateFolder) && defined('PHIEW_VIEW_TEMPLATE_FOLDER'))
+		{
+			$templateFolder = PHIEW_VIEW_TEMPLATE_FOLDER;
+		}
+
+		$this->_templateFolder = rtrim($this->_getSafePath($templateFolder), '/');
 	}
 	
 	/**
@@ -70,30 +68,24 @@ class Phiew_View_Template
 	 * 
 	 * @return string
 	 */
-	public function getDirname()
+	public function getTemplateFolder()
 	{
-		return $this->_dirname;
+		return $this->_templateFolder;
 	}
 
 	/**
-	 * Generate full file path for view script
+	 * Generate full file path for view template
 	 *
 	 * @param string $view
 	 * @return string
 	 */
 	protected function _getFilename($view)
 	{
-		$view = $this->_getSafePath($view);
-		
-		if (substr($view, -6) == '.phtml')
-		{
-			// Assume full path is given when using .phtml
-			return $view;
-		}
-		else
-		{
-			return $this->getDirname() . '/' . $view . '.phtml';
-		}
+		$templateFolder = ($this->getTemplateFolder() ? $this->getTemplateFolder() . '/' : '');
+		$view           = $this->_getSafePath($view);
+		$filePostfix    = (substr($view, -6) == '.phtml' ? '' : '.phtml');
+
+		return $templateFolder . $view . $filePostfix;
 	}
 
 	/**

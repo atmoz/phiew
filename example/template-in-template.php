@@ -2,6 +2,4 @@
 
 require_once 'autoload.php';
 
-define('PHIEW_VIEW_DIR', dirname(__FILE__) . '/views');
-
-Phiew_View::render('template-in-template');
+Phiew_View::render('views/template-in-template');

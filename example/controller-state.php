@@ -1,7 +1,9 @@
 <?php
 
 require_once 'autoload.php';
-define('PHIEW_VIEW_DIR', dirname(__FILE__) . '/views');
+
+// Making "views" the default view folder
+Phiew_View::setTemplateFolder(dirname(__FILE__) . '/views');
 
 // Important: Phiew_Controller_StateAbstract need an active session
 session_start();
