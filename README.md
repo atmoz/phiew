@@ -38,11 +38,10 @@ and I recommend you do. [See the example autoloader][1] for hints.
 ### Phiew_View
 
 You can, if you will, set up a default folder where Phiew_View will look for
-templates. Just define a `PHIEW_VIEW_DIR` global constant with your folder path.
+templates. Just define a `PHIEW_VIEW_TEMPLATE_FOLDER` global constant or use
+`Phiew_View::setTemplateFolder()`.
 
-You can also use absolute or relative path directly to the .phtml file, and just 
-bypass the need to define a folder. 
-Just remember to include ".phtml" at the end of the first argument.
+You can also use absolute or relative path, removing the need to define a folder path.
 
 ### Phiew_Controller_StateAbstract
 
