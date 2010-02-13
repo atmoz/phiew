@@ -100,12 +100,12 @@ abstract class Phiew_Controller_StateAbstract
 
 		if (headers_sent())
 		{
-			echo '<script type="text/javascript">document.location = ' 
-				. htmlspecialchars($url) . '</script>';
+			echo '<script type="text/javascript">document.location = "'
+				. htmlspecialchars($url) . '"</script>';
 		}
 		else
 		{
-			header('location: ' . $url);
+			header('Location: ' . $url);
 		}
 
 		exit('<a href="' . htmlspecialchars($url) . '">Redirecting ...</a>');
