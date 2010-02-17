@@ -81,11 +81,15 @@ class Phiew_View_Template
 	 */
 	protected function _getFilename($view)
 	{
-		$templateFolder = ($this->getTemplateFolder() ? $this->getTemplateFolder() . '/' : '');
-		$view           = $this->_getSafePath($view);
-		$filePostfix    = (substr($view, -6) == '.phtml' ? '' : '.phtml');
+		$view      = $this->_getSafePath($view);
+		$extension = (substr($view, -6) == '.phtml' ? '' : '.phtml');
 
-		return $templateFolder . $view . $filePostfix;
+		if (substr($view, 0, 1) == '/') // Want root folder with that?
+		{
+			$view = $this->getTemplateFolder() . $view;
+		}
+
+		return $view . $extension;
 	}
 
 	/**
