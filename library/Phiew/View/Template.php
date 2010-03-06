@@ -55,12 +55,7 @@ class Phiew_View_Template
 	 */
 	public function setTemplateFolder($templateFolder)
 	{
-		if (empty($templateFolder) && defined('PHIEW_VIEW_TEMPLATE_FOLDER'))
-		{
-			$templateFolder = PHIEW_VIEW_TEMPLATE_FOLDER;
-		}
-
-		$this->_templateFolder = rtrim($this->_getSafePath($templateFolder), '/');
+		$this->_templateFolder = $templateFolder;
 	}
 	
 	/**
@@ -70,7 +65,16 @@ class Phiew_View_Template
 	 */
 	public function getTemplateFolder()
 	{
-		return $this->_templateFolder;
+		if (empty($this->_templateFolder) && defined('PHIEW_VIEW_TEMPLATE_FOLDER'))
+		{
+			$templateFolder = PHIEW_VIEW_TEMPLATE_FOLDER;
+		}
+		else
+		{
+			$templateFolder = $this->_templateFolder;
+		}
+
+		return $this->_getSafePath( rtrim($templateFolder, '/') );
 	}
 
 	/**
