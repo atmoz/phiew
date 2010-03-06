@@ -2,8 +2,8 @@
 
 require_once 'autoload.php';
 
-// Making "views" the root view folder
-Phiew_View::setTemplateFolder(dirname(__FILE__) . '/views');
+// Setting folder where Phiew_View will look for templates
+Phiew_View::setTemplateFolder('views');
 
 // Important: Phiew_Controller_StateAbstract need an active session
 session_start();
@@ -22,7 +22,7 @@ class LoginController extends Phiew_Controller_StateAbstract
 	public function showForm()
 	{
 		$state = $this->_getState();
-		Phiew_View::render('/controller-state', $state);
+		Phiew_View::render('controller-state', $state);
 	}
 	
 	public function submitForm()
