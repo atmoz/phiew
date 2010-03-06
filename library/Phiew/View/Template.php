@@ -34,11 +34,11 @@ class Phiew_View_Template
 	{
 		$allowedChars = array('/', '.', '-', '_');
 
-		if (is_null($string))
+		if (empty($string))
 		{
 			return null; // Skip the validation (ctype_alnum() makes it fail anyway)
 		}
-		else if (ctype_alnum(str_replace($allowedChars, '', $string)) && strpos($string, '..') === false) 
+		else if (ctype_alnum(str_replace($allowedChars, '', $string))) 
 		{
 			return $string;
 		}
@@ -73,8 +73,8 @@ class Phiew_View_Template
 		{
 			$templateFolder = $this->_templateFolder;
 		}
-
-		return $this->_getSafePath( rtrim($templateFolder, '/') );
+		
+		return realpath( $this->_getSafePath( $templateFolder ) );
 	}
 
 	/**
@@ -88,9 +88,9 @@ class Phiew_View_Template
 		$view      = $this->_getSafePath($view);
 		$extension = (substr($view, -6) == '.phtml' ? '' : '.phtml');
 
-		if (substr($view, 0, 1) == '/') // Want root folder with that?
+		if (substr($view, 0, 1) != '/' && $this->getTemplateFolder())
 		{
-			$view = $this->getTemplateFolder() . $view;
+			$view = $this->getTemplateFolder() . '/' . $view;
 		}
 
 		return $view . $extension;
@@ -176,7 +176,8 @@ class Phiew_View_Template
 		}
 		else
 		{
-			trigger_error('Could not find view script: ' . $filename, E_USER_ERROR);
+			trigger_error('Could not find view script: ' . $filename, E_USER_WARNING);
+			return false;
 		}
 	}
 
