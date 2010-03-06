@@ -25,9 +25,9 @@ class Phiew_Autoload
 	 */
 	public static function loadClass($className)
 	{
-		$phiewFolder = dirname(__FILE__) . '/../';
+		$phiewFolder = realpath( dirname(__FILE__) . '/..' );
 		$classPath   = str_replace('_',  '/', $className) . '.php';
-		$file        = $phiewFolder . $classPath;
+		$file        = $phiewFolder . '/' . $classPath;
 
 		if (is_readable($file))
 		{
