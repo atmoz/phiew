@@ -142,11 +142,11 @@ class Phiew_View_Template
 	 * 
 	 * @param array $data
 	 */
-	public function setData(array $data)
+	public function setData($data)
 	{
 		$this->clearData();
 		
-		foreach ($data as $key => $value)
+		foreach ((array)$data as $key => $value)
 		{
 			$this->__set($key, $value);
 		}
@@ -169,7 +169,7 @@ class Phiew_View_Template
 	 * @param array $data
 	 * @return boolean
 	 */
-	public function render($view, array $data = array())
+	public function render($view, $data = array())
 	{
 		$filename = $this->_getFilename($view);
 

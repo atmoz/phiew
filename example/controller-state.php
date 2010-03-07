@@ -5,49 +5,58 @@ require_once 'autoload.php';
 // Setting folder where Phiew_View will look for templates
 Phiew_View::setTemplateFolder('views');
 
-// Important: Phiew_Controller_StateAbstract need an active session
-session_start();
-
-class LoginController extends Phiew_Controller_StateAbstract
+/**
+ * Example login controller
+ */
+class LoginController
 {
-	protected function _createDefaultState()
+	/**
+	 * Controller state data
+	 * @var Phiew_Controller_State
+	 */
+	protected $_state;
+
+	/**
+	 * Construct: set default state
+	 */
+	public function __construct()
 	{
-		// Define default values in state
-		return array(
+		$this->_state = new Phiew_Controller_State(array(
 			'username'	=> null,
 			'message'	=> 'Try to log in with a wrong username.'
-		);
+		));
 	}
-	
-	public function showForm()
+
+	/**
+	 * View form
+	 */
+	public function viewForm()
 	{
-		$state = $this->_getState();
-		Phiew_View::render('controller-state', $state);
+		Phiew_View::render('controller-state', $this->_state);
 	}
-	
-	public function submitForm()
+
+	/**
+	 * Handle form post request
+	 */
+	public function postForm()
 	{
-		$state = $this->_createDefaultState();
-		$state['username'] = $_POST['username']; // Modify state
-		
-		if ($_POST['username'] == 'test' && $_POST['password'] == 'test')
-		{
-			$state['message'] = 'Login OK. :-)';
-		}
-		else
-		{
-			$state['message'] = 'Wrong username or password. Try again.';
-		}
+		// Make sure the username is saved for next request
+		$this->_state['username'] = $_POST['username'];
+
+		// Fake login attempt message
+		$this->_state['message'] = 'Wrong username or password. Try again.';
 		
 		// Saves the state and redirects to URL with statekey as parameter
-		$this->_redirectState($_SERVER['REQUEST_URI'], $state);
+		$this->_state->redirectData($_SERVER['REQUEST_URI']);
 	}
 }
 
 
-// Bootstrap the controller
+//------------------------------------------------------------------------------
+
+// Bootstrap the controller (so the example works)
 $controller = new LoginController();
-$action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : 'showForm');
+$action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : 'viewForm');
 if (is_callable(array($controller, $action)))
 {
 	$controller->$action();
