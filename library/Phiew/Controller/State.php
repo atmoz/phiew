@@ -65,9 +65,9 @@ class Phiew_Controller_State extends ArrayObject
 	 */
 	protected function _initInstanceId()
 	{
-		if (isset($_POST['stateInstance']))
+		if (isset($_POST['stateInstance']) && ctype_digit($_POST['stateInstance']))
 		{
-			$this->_instanceId = $_POST['stateInstance'];
+			$this->_instanceId = (int) $_POST['stateInstance'];
 		}
 		else
 		{
