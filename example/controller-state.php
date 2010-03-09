@@ -32,7 +32,7 @@ class LoginController
 	 */
 	public function viewForm()
 	{
-		Phiew_View::render('controller-state', $this->_state);
+		echo Phiew_View::render('controller-state', $this->_state);
 	}
 
 	/**

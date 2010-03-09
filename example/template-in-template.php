@@ -2,4 +2,4 @@
 
 require_once 'autoload.php';
 
-Phiew_View::render('views/template-in-template');
+echo Phiew_View::render('views/template-in-template');

@@ -14,29 +14,36 @@
  */
 class Phiew_View
 {
+	/**
+	 * @var string
+	 */
 	protected static $_templateFolder;
 
+	/**
+	 * @param string $folder
+	 */
 	public static function setTemplateFolder($folder)
 	{
 		self::$_templateFolder = $folder;
 	}
 
+	/**
+	 * @return string
+	 */
 	public static function getTemplateFolder()
 	{
 		return self::$_templateFolder;
 	}
 
+	/**
+	 * @param string $view
+	 * @param array $data
+	 * @return null|string
+	 */
 	public static function render($view, $data = array())
 	{
 		$template = new Phiew_View_Template();
 		$template->setTemplateFolder(self::getTemplateFolder());
-		$template->render($view, $data);
-	}
-
-	public static function capture($view, $data = array())
-	{
-		$template = new Phiew_View_Template();
-		$template->setTemplateFolder(self::getTemplateFolder());
-		return $template->capture($view, $data);
+		return $template->render($view, $data);
 	}
 }

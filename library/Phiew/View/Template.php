@@ -163,11 +163,11 @@ class Phiew_View_Template
 	}
 
 	/**
-	 * Output view script
+	 * Return output from view template
 	 *
 	 * @param string $view
 	 * @param array $data
-	 * @return boolean
+	 * @return null|string
 	 */
 	public function render($view, $data = array())
 	{
@@ -176,27 +176,16 @@ class Phiew_View_Template
 		if (is_readable($filename))
 		{
 			$this->setData($data);
-			return (bool) include $filename;
+
+			ob_start();
+			include $filename;
+			return ob_get_clean();
 		}
 		else
 		{
 			trigger_error('Could not find view script: ' . $filename, E_USER_WARNING);
-			return false;
+			return null;
 		}
-	}
-
-	/**
-	 * Get output from view script as string
-	 *
-	 * @param string $view
-	 * @param array $data
-	 * @return string
-	 */
-	public function capture($view, $data = array())
-	{
-		ob_start();
-		$this->render($view, $data);
-		return ob_get_clean();
 	}
 
 	/**
