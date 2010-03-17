@@ -29,6 +29,7 @@ class Phiew_Controller
 	/**
 	 * Render template based on controller action. Using class name as folder.
 	 *
+	 * @param string $action
 	 * @param array $data
 	 * @return string|null
 	 */
