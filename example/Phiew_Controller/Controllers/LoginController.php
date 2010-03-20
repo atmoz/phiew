@@ -1,11 +1,7 @@
 <?php
 
-// Register autoloader
-require_once '../../../library/Phiew/Autoload.php';
-Phiew_Autoload::register();
-
-// Setting folder where Phiew_View will look for templates
-Phiew_View::setTemplateFolder('../Views');
+// Folder where Phiew_View will look for templates
+Phiew_View::setTemplateFolder(dirname(__FILE__) . '/../Views');
 
 /**
  * Example login controller
@@ -37,19 +33,4 @@ class LoginController extends Phiew_Controller
 		// Saves the state and redirects to URL with statekey as parameter
 		$this->_redirectState($_SERVER['REQUEST_URI']);
 	}
-}
-
-
-//------------------------------------------------------------------------------
-
-// Bootstrap the controller (so the example works)
-$controller = new LoginController();
-$action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : 'viewForm');
-if (is_callable(array($controller, $action)))
-{
-	$controller->$action();
-}
-else
-{
-	echo 'Action does not exist!';
 }
