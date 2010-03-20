@@ -1,8 +1,5 @@
 <?php
 
-// Folder where Phiew_View will look for templates
-Phiew_View::setTemplateFolder(dirname(__FILE__) . '/../Views');
-
 /**
  * Example login controller
  */
