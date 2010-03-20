@@ -11,7 +11,7 @@ class LoginController extends Phiew_Controller
 	/**
 	 * View form
 	 */
-	public function viewForm()
+	public function index()
 	{
 		echo $this->_renderCurrentAction();
 	}
