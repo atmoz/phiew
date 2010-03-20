@@ -52,7 +52,7 @@ class Phiew_Controller extends Phiew_Controller_State
 	protected function _renderCurrentAction($data = array())
 	{
 		// Get calling function name
-		$trace = debug_backtrace();
+		$trace = debug_backtrace(false);
 		$function = $trace[1]['function'];
 
 		return $this->_renderAction($function, $data);
