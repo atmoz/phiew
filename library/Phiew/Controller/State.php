@@ -12,13 +12,13 @@
 /**
  * Controller state management
  */
-class Phiew_Controller_State extends ArrayObject
+class Phiew_Controller_State
 {
 	/**
-	 * Random state session key
+	 * Random state key
 	 * @var string
 	 */
-	protected static $_sessionKey;
+	protected static $_stateKey;
 
 	/**
 	 * Counting instances
@@ -37,34 +37,11 @@ class Phiew_Controller_State extends ArrayObject
 	 *
 	 * @param array $defaultData
 	 */
-	public function __construct($defaultData = array())
+	public function __construct()
 	{
-		parent::__construct($defaultData, ArrayObject::ARRAY_AS_PROPS);
 		self::$_instanceCounter++;
-		$this->_initInstanceId();
 
-		// We need an active session
-		if (!session_id())
-		{
-			session_start();
-		}
-
-		// Load data from session
-		$this->loadData();
-
-		// If using the object directly in the view, this is nice to have access to
-		$this->stateSession  = $this->getSessionKey();
-		$this->stateInstance = $this->getInstanceId();
-
-		// Make sure we have the data in session
-		$this->saveData();
-	}
-
-	/**
-	 * Determine what the instance ID is
-	 */
-	protected function _initInstanceId()
-	{
+		// Determine what current instance ID should be
 		if (isset($_POST['stateInstance']) && ctype_digit($_POST['stateInstance']))
 		{
 			$this->_instanceId = (int) $_POST['stateInstance'];
@@ -73,6 +50,22 @@ class Phiew_Controller_State extends ArrayObject
 		{
 			$this->_instanceId = self::$_instanceCounter;
 		}
+
+		// We need an active session
+		if (!session_id())
+		{
+			session_start();
+		}
+
+		// If using the object directly in the view, this is nice to have access to
+		$this->stateKey  = $this->_getStateKey();
+		$this->stateInstance = $this->_getInstanceId();
+
+		// Load data from session, if any
+		$this->_loadState();
+
+		// Make sure we have the data in session
+		$this->_saveState();
 	}
 
 	/**
@@ -80,7 +73,7 @@ class Phiew_Controller_State extends ArrayObject
 	 *
 	 * @return integer
 	 */
-	public function getInstanceId()
+	protected function _getInstanceId()
 	{
 		return $this->_instanceId;
 	}
@@ -90,45 +83,54 @@ class Phiew_Controller_State extends ArrayObject
 	 *
 	 * @return string
 	 */
-	public function getSessionKey()
+	protected function _getStateKey()
 	{
-		if (empty(self::$_sessionKey))
+		if (empty(self::$_stateKey))
 		{
 			// Depends on the option variables_order in php.ini to have default value
-			if (isset($_REQUEST['stateSession']))
+			if (isset($_REQUEST['stateKey']))
 			{
-				self::$_sessionKey = $_REQUEST['stateSession'];
+				self::$_stateKey = $_REQUEST['stateKey'];
 			}
 			else
 			{
-				self::$_sessionKey = substr(sha1(mt_rand()), 0, 8);
+				self::$_stateKey = substr(sha1(mt_rand()), 0, 8);
 			}
 		}
 
-		return self::$_sessionKey;
+		return self::$_stateKey;
 	}
 
 	/**
 	 * Load saved data, if any
 	 */
-	public function loadData()
+	protected function _loadState()
 	{
-		$sessionKey = $this->getSessionKey();
+		$sessionKey = $this->_getStateKey();
 
-		if (isset($_SESSION[__CLASS__][$sessionKey][$this->getInstanceId()]))
+		if (isset($_SESSION[__CLASS__][$sessionKey][$this->_getInstanceId()]))
 		{
-			$data = unserialize($_SESSION[__CLASS__][$sessionKey][$this->getInstanceId()]);
-			$this->exchangeArray((array) $data);
+			$state = unserialize($_SESSION[__CLASS__][$sessionKey][$this->_getInstanceId()]);
+			//print_r($state); echo '<br />';
+			foreach ($state as $property => $value)
+			{
+					$this->$property = $value;
+			}
 		}
 	}
 
 	/**
 	 * Save state data
 	 */
-	public function saveData()
+	protected function _saveState()
 	{
-		$data = (array) $this;
-		$_SESSION[__CLASS__][$this->getSessionKey()][$this->getInstanceId()] = serialize($data);
+		$state = array();
+		foreach ((array)$this as $property => $value)
+		{
+			if (ctype_alpha(substr($property, 0, 1)) && strpos($property, ':') === false)
+				$state[$property] = $value;
+		}
+		$_SESSION[__CLASS__][$this->_getStateKey()][$this->_getInstanceId()] = serialize($state);
 	}
 
 	/**
@@ -136,17 +138,17 @@ class Phiew_Controller_State extends ArrayObject
 	 *
 	 * @param string $url
 	 */
-	public function redirectData($url)
+	protected function _redirectState($url)
 	{
-		$this->saveData();
+		$this->_saveState();
 
-		if (preg_match('/[&\?]stateSession=/', $url))
+		if (preg_match('/[&\?]stateKey=/', $url))
 		{
-			$url = preg_replace('/([&\?]stateSession=)[^&#]*/', '${1}'.$this->getSessionKey(), $url);
+			$url = preg_replace('/([&\?]stateKey=)[^&#]*/', '${1}'.$this->_getStateKey(), $url);
 		}
 		else
 		{
-			$url .= (strpos($url, '?') ? '&' : '?') . 'stateSession=' . $this->getSessionKey();
+			$url .= (strpos($url, '?') ? '&' : '?') . 'stateKey=' . $this->_getStateKey();
 		}
 
 		if (headers_sent())

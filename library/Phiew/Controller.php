@@ -12,7 +12,7 @@
 /**
  * Makes your controllers easier to use
  */
-class Phiew_Controller
+class Phiew_Controller extends Phiew_Controller_State
 {
 	/**
 	 * Render template
@@ -23,6 +23,11 @@ class Phiew_Controller
 	 */
 	protected function _render($view, $data = array())
 	{
+		if (empty($data))
+		{
+			$data = (array) $this;
+		}
+
 		return Phiew_View::render($view, $data);
 	}
 
