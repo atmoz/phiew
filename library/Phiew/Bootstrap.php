@@ -14,10 +14,15 @@
  */
 class Phiew_Bootstrap
 {
-	const ROUTING_METHOD_PARAMETERS = 1;
-	const ROUTING_METHOD_URI = 2;
-
+	/**
+	 * @var array
+	 */
 	protected $_settings;
+	
+	/**
+	 * @var Phiew_Controller_RouterInterface
+	 */
+	protected $_router;
 
 	/**
 	 * Configure bootstrap
@@ -26,16 +31,13 @@ class Phiew_Bootstrap
 	 */
 	public function __construct($settings = array())
 	{
-		// Where is this object used?
-		$trace = debug_backtrace(false);
-		$file = $trace[0]['file'];
-
 		$defaultSettings = array(
-			'application_folder' => dirname($file),
-			'routing_method'     => self::ROUTING_METHOD_PARAMETERS
+			'application_folder' => null,
+			'router'             => new Phiew_Controller_Router_UrlParameters()
 		);
 
 		$this->_settings = array_merge($defaultSettings, $settings);
+		$this->_router   = $this->_settings['router'];
 	}
 
 	/**
@@ -45,27 +47,22 @@ class Phiew_Bootstrap
 	 */
 	public function delegate()
 	{
-		$controllerFolder = realpath($this->_settings['application_folder'] . '/Controllers');
+		// application_folder must exist
+		if (!is_dir(realpath($this->_settings['application_folder'])))
+		{
+			throw new Exception('Application folder does not exist: '
+				. $this->_settings['application_folder']);
+		}
 
+		$controllerFolder = realpath($this->_settings['application_folder'] . '/Controllers');
 		if ($controllerFolder === false)
 		{
 			throw new Exception('Controller folder failed: ' . $this->_settings['controllers']);
 		}
 
-		switch ($this->_settings['routing_method'])
-		{
-			case self::ROUTING_METHOD_PARAMETERS:
-				$controllerName = isset($_REQUEST['controller'])
-				                ? $_REQUEST['controller']
-				                : 'index';
-				$controllerName .= 'Controller';
-				$actionName = isset($_REQUEST['action'])
-				            ? $_REQUEST['action']
-				            : 'index';
-				break;
-		}
-
-		$controllerPath = $controllerFolder . '/' . ucfirst($controllerName) . '.php';
+		$controllerName = ucfirst($this->_router->getController()) . 'Controller';
+		$controllerPath = $controllerFolder . '/' . $controllerName . '.php';
+		$actionName     = strtolower($_SERVER['REQUEST_METHOD']) . ucfirst($this->_router->getAction());
 
 		if (!is_readable($controllerPath))
 		{
@@ -73,7 +70,7 @@ class Phiew_Bootstrap
 		}
 
 		include_once $controllerPath;
-		$controller = new $controllerName();
+		$controller = new $controllerName($this->_router);
 
 		if (is_callable(array($controller, $actionName)))
 		{
@@ -81,7 +78,7 @@ class Phiew_Bootstrap
 		}
 		else
 		{
-			throw new Exception('Action does not exist!');
+			throw new Exception('Action does not exist: ' . $controllerName . '::' . $actionName . '()');
 		}
 	}
 }

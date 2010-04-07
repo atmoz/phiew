@@ -11,7 +11,7 @@ class LoginController extends Phiew_Controller
 	/**
 	 * View form
 	 */
-	public function index()
+	public function getIndex()
 	{
 		echo $this->_renderCurrentAction();
 	}
@@ -19,7 +19,7 @@ class LoginController extends Phiew_Controller
 	/**
 	 * Handle form post request
 	 */
-	public function postForm()
+	public function postIndex()
 	{
 		// Make sure the username is saved for next request
 		$this->username = $_POST['username'];

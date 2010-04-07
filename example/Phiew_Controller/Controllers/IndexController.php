@@ -8,8 +8,10 @@ class IndexController extends Phiew_Controller
 	/**
 	 * View intro
 	 */
-	public function index()
+	public function getIndex()
 	{
-		echo $this->_renderCurrentAction();
+		echo $this->_renderCurrentAction(array(
+			'loginUrl' => $this->_router->generateUrl('login')
+		));
 	}
 }

@@ -15,6 +15,23 @@
 class Phiew_Controller extends Phiew_Controller_State
 {
 	/**
+	 * @var Phiew_Controller_RouterInterface
+	 */
+	protected $_router;
+
+	/**
+	 * Setup
+	 * 
+	 * @param array $settings 
+	 */
+	public function __construct(Phiew_Controller_RouterInterface $router)
+	{
+		$this->_router = $router;
+
+		parent::__construct();
+	}
+
+	/**
 	 * Render template
 	 *
 	 * @param string $view
