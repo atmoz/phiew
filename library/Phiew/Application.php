@@ -10,9 +10,9 @@
  */
 
 /**
- * Bootstrap the application
+ * Holds the MVC parts together
  */
-class Phiew_Bootstrap
+class Phiew_Application
 {
 	/**
 	 * @var array
@@ -25,7 +25,7 @@ class Phiew_Bootstrap
 	protected $_router;
 
 	/**
-	 * Configure bootstrap
+	 * Configure application
 	 *
 	 * @param array $settings
 	 */
@@ -41,11 +41,11 @@ class Phiew_Bootstrap
 	}
 
 	/**
-	 * Delegate to a controller
+	 * Bootstrap the applocation. Delegates to a controller based on request.
 	 *
 	 * @throws Exception
 	 */
-	public function delegate()
+	public function bootstrap()
 	{
 		// application_folder must exist
 		if (!is_dir(realpath($this->_settings['application_folder'])))
