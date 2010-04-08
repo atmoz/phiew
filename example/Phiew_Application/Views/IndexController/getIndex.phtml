@@ -1,11 +1,14 @@
 
 <h1>Phiew example</h1>
-<h2>Phiew_Controller</h2>
+<h2>Phiew_Application</h2>
 
 <p>
-	The bootstrapper shows this page by default (IndexController/index).
+	<code>Phiew_Application::bootstrap()</code> analysed your request and
+	delegated the request to <code>IndexController::getIndex()</code>,
+	which in turn generated this page.
 </p>
 
-<p><a href="<?php echo $this->loginUrl ?>">Have a look at how Phiew_Controller_State works</a></p>
-
-
+<p>
+	<strong>Next:</strong>
+	<a href="<?php echo $this->loginUrl ?>">Have a look at how Phiew_Controller_State works</a>
+</p>
