@@ -74,7 +74,11 @@ class Phiew_Controller_Router_UrlParameters implements Phiew_Controller_RouterIn
 	 */
 	public function getParameters()
 	{
-		return array();
+		// Return GET parameters without controller and action
+		$parameters = $_GET;
+		unset($parameters[$this->_settings['controller_parameter']]);
+		unset($parameters[$this->_settings['action_parameter']]);
+		return $parameters;
 	}
 
 	/**
@@ -85,6 +89,13 @@ class Phiew_Controller_Router_UrlParameters implements Phiew_Controller_RouterIn
 	 */
 	public function generateUrl($controller = null, $action = null, $parameters = array())
 	{
+		// Convert parameters to value-pair array
+		foreach ($parameters as $parameter => $value)
+		{
+			$parameters[$parameter] = urlencode($parameter) . '=' . urlencode($value);
+		}
+
+		// No controller? Use current
 		if (empty($controller))
 		{
 			$controller = $this->getController();
@@ -94,21 +105,25 @@ class Phiew_Controller_Router_UrlParameters implements Phiew_Controller_RouterIn
 				$action = $this->getAction();
 			}
 		}
-		else if (empty($action))
+
+		// Add controller and action to value-pair array
+		if (!empty($action) && $action != 'index')
 		{
-			$action = $this->getAction();
+			array_unshift($parameters, $this->_settings['action_parameter'] . '=' . $action);
+		}
+		if ($controller != 'index')
+		{
+			array_unshift($parameters, $this->_settings['controller_parameter'] . '=' . $controller);
 		}
 
-		$url = sprintf('?%s=%s&%s=%s',
-			urlencode($this->_settings['controller_parameter']), urlencode($controller),
-			urlencode($this->_settings['action_parameter']), urlencode($action)
-		);
-
-		foreach ($parameters as $parameter => $value)
+		// Convert value-pair array to URL
+		if ($parameters)
 		{
-			$url .= '&' . urlencode($parameter) . '=' . urlencode($value);
+			return '?' . implode('&', $parameters);
 		}
-
-		return $url;
+		else
+		{
+			return null;
+		}
 	}
 }
