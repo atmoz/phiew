@@ -15,10 +15,10 @@
 class Phiew_Application
 {
 	/**
-	 * @var array
+	 * @var string
 	 */
-	protected $_settings;
-	
+	protected $_applicationFolder;
+
 	/**
 	 * @var Phiew_Controller_RouterInterface
 	 */
@@ -27,17 +27,36 @@ class Phiew_Application
 	/**
 	 * Configure application
 	 *
-	 * @param array $settings
+	 * @param array $values
 	 */
-	public function __construct($settings = array())
+	public function __construct($values = array())
 	{
-		$defaultSettings = array(
-			'application_folder' => null,
-			'router'             => new Phiew_Controller_Router_UrlParameters()
+		$defaultValues = array(
+			'applicationFolder' => null,
+			'router'            => new Phiew_Controller_Router_UrlParameters()
 		);
+		$values = array_merge($defaultValues, $values);
 
-		$this->_settings = array_merge($defaultSettings, $settings);
-		$this->_router   = $this->_settings['router'];
+		$this->setApplicationFolder($values['applicationFolder']);
+		$this->setRouter($values['router']);
+	}
+	
+	public function getApplicationFolder() {
+		return $this->_applicationFolder;
+	}
+	
+	public function setApplicationFolder($applicationFolder) {
+		$this->_applicationFolder = $applicationFolder;
+	}
+
+	public function getRouter()
+	{
+		return $this->_router;
+	}
+
+	public function setRouter(Phiew_Controller_RouterInterface $router)
+	{
+		$this->_router = $router;
 	}
 
 	/**
@@ -48,21 +67,21 @@ class Phiew_Application
 	public function bootstrap()
 	{
 		// application_folder must exist
-		if (!is_dir(realpath($this->_settings['application_folder'])))
+		if (!is_dir(realpath($this->getApplicationFolder())))
 		{
 			throw new Exception('Application folder does not exist: '
-				. $this->_settings['application_folder']);
+				. $this->getApplicationFolder());
 		}
 
-		$controllerFolder = realpath($this->_settings['application_folder'] . '/Controllers');
-		if ($controllerFolder === false)
+		$controllerFolder = $this->getApplicationFolder() . '/Controllers';
+		if (realpath($controllerFolder) === false)
 		{
-			throw new Exception('Controller folder failed: ' . $this->_settings['controllers']);
+			throw new Exception('Controller folder failed: ' . $controllerFolder);
 		}
 
-		$controllerName = ucfirst($this->_router->getController()) . 'Controller';
+		$controllerName = ucfirst($this->getRouter()->getController()) . 'Controller';
 		$controllerPath = $controllerFolder . '/' . $controllerName . '.php';
-		$actionName     = strtolower($_SERVER['REQUEST_METHOD']) . ucfirst($this->_router->getAction());
+		$actionName     = strtolower($_SERVER['REQUEST_METHOD']) . ucfirst($this->getRouter()->getAction());
 
 		if (!is_readable($controllerPath))
 		{
@@ -70,7 +89,7 @@ class Phiew_Application
 		}
 
 		include_once $controllerPath;
-		$controller = new $controllerName($this->_router);
+		$controller = new $controllerName();
 
 		if (is_callable(array($controller, $actionName)))
 		{

@@ -3,7 +3,7 @@
 /**
  * Example index controller
  */
-class IndexController extends Phiew_Controller
+class IndexController extends Phiew_ControllerAbstract
 {
 	/**
 	 * View intro

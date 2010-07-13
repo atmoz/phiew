@@ -10,7 +10,7 @@ Phiew_View::setTemplateFolder(dirname(__FILE__) . '/Views');
 try // bootstrapping the application
 {
 	$application = new Phiew_Application(array(
-		'application_folder' => dirname(__FILE__)
+		'applicationFolder' => dirname(__FILE__)
 	));
 	$application->bootstrap();
 }

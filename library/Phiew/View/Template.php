@@ -125,7 +125,7 @@ class Phiew_View_Template
 		}
 		else
 		{
-			trigger_error('Missing view data: ' . $name, E_USER_WARNING);
+			//trigger_error('Missing view data: ' . $name);
 		}
 	}
 
@@ -142,14 +142,9 @@ class Phiew_View_Template
 	 * 
 	 * @param array $data
 	 */
-	public function setData($data)
+	public function setData(array $data)
 	{
-		$this->clearData();
-		
-		foreach ((array)$data as $key => $value)
-		{
-			$this->__set($key, $value);
-		}
+		$this->_data = $data;
 	}
 	
 	/**
